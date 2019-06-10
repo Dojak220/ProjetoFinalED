@@ -2,6 +2,9 @@
 	Implementação do algoritmo de Kruskal
 	Para detectar ciclos iremos utilizar o algoritmo Union-Find que detecta
 	ciclos em grafos NÃO direcionados.
+
+	***CRÉDITOS***
+	https://gist.github.com/marcoscastro/38720f71e57e29e5360c
 */
 
 #include <iostream>
