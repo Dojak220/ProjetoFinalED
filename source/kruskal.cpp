@@ -5,8 +5,10 @@
 */
 
 #include <iostream>
+#include <vector>
 using namespace std;
-#define nVerticesMax 100;
+#define nVerticesMax 100
+
 
 class Aresta
 {
@@ -15,7 +17,7 @@ class Aresta
 
 public:
 
-	Aresta(int v1, int v2, int peso)
+	Aresta(int v1 = 0, int v2 = 0, int peso = 0)
 	{
 		vertice1 = v1;
 		vertice2 = v2;
@@ -37,90 +39,115 @@ public:
 		return peso;
 	}
 
-    /*
+    
         // sobrescrita do operador "<"
         bool operator < (const Aresta& aresta2) const
         {
             return (peso < aresta2.peso);
         }
-    */
+    
 	
 };
 
 class Grafo
 {
 	int N; // número de vértices
-	Aresta arestas[nVerticesMax]; // vetor de arestas
-    int Natual;
+	//vector<Aresta> arestas; // vetor de arestas
+    Aresta grafo[nVerticesMax];
+	int N_atual;
+	int pai[nVerticesMax];
+	
 
 public:
 
 	Grafo(int N)
 	{
-		if(N < nVerticesMax)
-            this->N = N;
-        this->Natual = 0;
+		this->N = N;
+	}
+
+	int obterNumVertices()
+	{
+		return N;
 	}
 
 	// função que adiciona uma aresta
-	void adicionarAresta(int v1, int v2, int peso)
-	{
+	void adicionarAresta(int v1, int v2, int peso){
 		Aresta aresta_aux(v1, v2, peso);
-		if(Natual < N)
-            arestas[Natual++] = aresta_aux;
+		if(N_atual < N)
+            grafo[N_atual++] = aresta_aux;
 	}
 
-    /*
-	// função que busca o subconjunto de um elemento "i"
-	int buscar(int subset[], int i)
-	{
-		if(subset[i] == -1)
-			return i;
-		return buscar(subset, subset[i]);
+    void inicializaPai(int pai[nVerticesMax]){
+	   
+	   	for(int i = 0; i < N; i++) {
+		   pai[i] = i;
+   		}
+    }
+	bool same_set(int x, int y){
+    	if(pai[x] == pai[y]) return true;
+    	else return false;
+	}
+	void join(int x, int y){
+		int aux = pai[x];
+		if(!same_set(x,y))
+		{
+			for (int i = 0; i < N; i++)
+			{
+				if (pai[i] == aux)
+				{
+					pai[i] = pai[y];
+				}
+			}
+		}
 	}
 
-	// função para unir dois subconjuntos em um único subconjunto
-	void unir(int subset[], int v1, int v2)
-	{
-		int v1_set = buscar(subset, v1);
-		int v2_set = buscar(subset, v2);
-		subset[v1_set] = v2_set;
+	static void merge (int p, int q, int r, Aresta grafo[]){
+		Aresta *w;                                 //  1
+		w = (Aresta *)malloc ((r-p) * sizeof (Aresta));     //  2
+		int i = p, j = q;                       //  3
+		int k = 0;                              //  4
+
+		while (i < q && j < r) {                //  5
+			if (grafo[i].obterPeso() <= grafo[j].obterPeso())  w[k++] = grafo[i++];  //  6
+			else  w[k++] = grafo[j++];               //  7
+		}                                       //  8
+		while (i < q)  w[k++] = grafo[j++];         //  9
+		while (j < r)  w[k++] = grafo[j++];         // 10
+		for (i = p; i < r; ++i)  grafo[i] = w[i-p]; // 11
+		free (w);                               // 12
 	}
-    */
+	void mergesort (int p, int r, Aresta grafo[]){
+		if (p < r-1) {                 // 1
+			int q = (p + r)/2;          // 2
+			mergesort (p, q, grafo);        // 3
+			mergesort (q, r, grafo);        // 4
+			merge (p, q, r, grafo);     // 5
+		}
+	}
 
 	/// função que roda o algoritmo de Kruskal
 	void kruskal()
 	{
-		Aresta arvore[];
-		//int size_arestas = arestas.size();
+		Aresta arvore[100];
+		int size_arestas = obterNumVertices();
 
-		// ordena as arestas pelo menor peso
-		ordenaHeapMin(arestas) //sort(arestas.begin(), arestas.end());
-
-		int representante[N];
-        for (int i = 0; i < N; i++)
-        {
-            representante[i] = i;
-        }
+		int pai[nVerticesMax];
+		inicializaPai(pai);
         
+		// ordena as arestas pelo menor peso
+		mergesort(0,N,Grafo::grafo); //sort(arestas.begin(), arestas.end());
+
+		int size = 0;
         for(int i = 0; i < size_arestas; i++)
 		{
-			int v1 = buscar(subset, arestas[i].obterVertice1());
-			int v2 = buscar(subset, arestas[i].obterVertice2());
-
-			if(v1 != v2)
+			
+			if(!same_set(Grafo::grafo[i].obterVertice1(),Grafo::grafo[i].obterVertice2()))
 			{
 				// se forem diferentes é porque NÃO forma ciclo, insere no vetor
-				arvore.push_back(arestas[i]);
-				unir(subset, v1, v2); // faz a união
+				arvore[++size] = Grafo::grafo[i];
+				join(Grafo::grafo[i].obterVertice1(),Grafo::grafo[i].obterVertice2()); // faz a união
 			}
 		}
-
-        // aloca memória para criar "V" subconjuntos
-		int * subset = new int[V];
-
-		// inicializa todos os subconjuntos como conjuntos de um único elemento
-		memset(subset, -1, sizeof(int) * V);
 
 		int size_arvore = arvore.size();
 
@@ -133,6 +160,8 @@ public:
 		}
 	}
 };
+
+
 
 int main(int argc, char *argv[])
 {
