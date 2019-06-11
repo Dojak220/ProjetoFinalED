@@ -9,22 +9,8 @@ typedef struct Aresta{
 }Aresta;
 
 typedef struct Grafo{
-    int n = 0, m = 0, N_atual = 0;// n -> n° vertices, m -> n° arestas
+    int n, m, N_atual;// n -> n° vertices, m -> n° arestas
     Aresta grafo[MAX];
-    int i = 0;
-
-    void setNM(int n, int m){
-        this->n = n;
-        this->m = m;
-    }
-    void setAresta(int v1, int v2,int peso){
-        if(N_atual > n)
-            grafo[i].vertice1 = v1;
-            grafo[i].vertice2 = v2;
-            grafo[i].peso = peso;
-            i++; N_atual++;
-    }
-
 }Grafo;
 
 int pai[MAX];
@@ -38,13 +24,11 @@ void iniciaPai(int n){
 // Checa se dois vértices pertencem ao mesmo subset. Isso indica que, caso uma aresta seja colocada entre
 // esses vértices, formará um ciclo, deixando, assim, de ser uma árvore.
 bool same_set(int x, int y){
-        cout << "\nEntrou same-set\n";
         if(pai[x] == pai[y]) return true;
         else return false;
 }
 // Faz com que o pai de y seja pai também de x e de todos os vértices que eram representados por x.
 void join(int x, int y, int n){
-    cout << "\nEntrou join\n";
     int aux = pai[x];
     for (int i = 0; i < n; i++) {
         if (pai[i] == aux) {
@@ -112,32 +96,33 @@ int main(){
     Grafo g;
     Grafo arvore;
 
-    g.setNM(10,15);
+    g.n = 10;
+    g.m = 15;
 
-    g.setAresta(0, 1, 6);
-    g.setAresta(0, 3, 1);
-    g.setAresta(0, 4, 4);
-    g.setAresta(1, 2, 5);
-    g.setAresta(1, 4, 1);
-    g.setAresta(2, 5, 2);
-    g.setAresta(3, 4, 8);
-    g.setAresta(3, 6, 8);
-    g.setAresta(4, 5, 5);
-    g.setAresta(4, 6, 7);
-    g.setAresta(4, 7, 1);
-    g.setAresta(5, 8, 6);
-    g.setAresta(6, 7, 10);
-    g.setAresta(7, 8, 12);
-    g.setAresta(7, 9, 7);
+    g.grafo[0].vertice1 = 0; g.grafo[0].vertice2 = 1; g.grafo[0].peso = 6;
+    g.grafo[1].vertice1 = 0; g.grafo[1].vertice2 = 3; g.grafo[1].peso = 1;
+    g.grafo[2].vertice1 = 0; g.grafo[2].vertice2 = 4; g.grafo[2].peso = 4;
+    g.grafo[3].vertice1 = 1; g.grafo[3].vertice2 = 2; g.grafo[3].peso = 5;
+    g.grafo[4].vertice1 = 1; g.grafo[4].vertice2 = 4; g.grafo[4].peso = 1;
+    g.grafo[5].vertice1 = 2; g.grafo[5].vertice2 = 5; g.grafo[5].peso = 2;
+    g.grafo[6].vertice1 = 3; g.grafo[6].vertice2 = 4; g.grafo[6].peso = 8;
+    g.grafo[7].vertice1 = 3; g.grafo[7].vertice2 = 6; g.grafo[7].peso = 8;
+    g.grafo[8].vertice1 = 4; g.grafo[8].vertice2 = 5; g.grafo[8].peso = 5;
+    g.grafo[9].vertice1 = 4; g.grafo[9].vertice2 = 6; g.grafo[9].peso = 7;
+    g.grafo[10].vertice1 = 4; g.grafo[10].vertice2 = 7; g.grafo[10].peso = 1;
+    g.grafo[11].vertice1 = 5; g.grafo[11].vertice2 = 8; g.grafo[11].peso = 6;
+    g.grafo[12].vertice1 = 6; g.grafo[12].vertice2 = 7; g.grafo[12].peso = 10;
+    g.grafo[13].vertice1 = 7; g.grafo[13].vertice2 = 8; g.grafo[13].peso = 12;
+    g.grafo[14].vertice1 = 7; g.grafo[14].vertice2 = 9; g.grafo[14].peso = 7;
 
+    cout << "Grafo original: \n";
     for(int i = 0; i < g.m; i++){
         cout << "(" << g.grafo[i].vertice1 << " , " << g.grafo[i].vertice2 << ")" << " = " << g.grafo[i].peso << endl;
     }
-
-    cout << endl << endl;
-
+    
     mergeSort(g.grafo,0,g.m - 1);
 
+    cout << "\n\nGrafo ordenado: \n";
     for(int i = 0; i < g.m; i++){
         cout << "(" << g.grafo[i].vertice1 << " , " << g.grafo[i].vertice2 << ")" << " = " << g.grafo[i].peso << endl;
     }
@@ -159,6 +144,7 @@ int main(){
             join(g.grafo[i].vertice1,g.grafo[i].vertice2,g.n); // faz a união
         }
     }
+    cout << "\n\nÁrvore geradora: \n";
     for(int i = 0; i < size_arvore; i++){
         cout << "(" << arvore.grafo[i].vertice1 << " , " << arvore.grafo[i].vertice2 << ")" << " = " << arvore.grafo[i].peso << endl;
     }
