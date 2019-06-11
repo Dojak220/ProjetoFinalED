@@ -15,7 +15,6 @@ typedef struct Grafo{
 
 int pai[MAX];
 
-
 // Inicia cada vértice como representante de si próprio.
 void iniciaPai(int n){
     for(int i = 0; i <= n; i++){
