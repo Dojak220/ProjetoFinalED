@@ -1,187 +1,153 @@
-/*
-	Implementação do algoritmo de Kruskal
-	Para detectar ciclos iremos utilizar o algoritmo Union-Find que detecta
-	ciclos em grafos NÃO direcionados.
-*/
-
 #include <iostream>
-#include <vector>
-#include <stdlib.h>
+#include <algorithm>
+#define MAX 100
+
 using namespace std;
-#define nVerticesMax 100
+
+typedef struct Aresta{
+    int vertice1, vertice2, peso;
+}Aresta;
+
+typedef struct Grafo{
+    int n, m, N_atual;// n -> n° vertices, m -> n° arestas
+    Aresta grafo[MAX];
+}Grafo;
+
+int pai[MAX];
 
 
-class Aresta
-{
-	int vertice1, vertice2;
-    int peso;
-
-public:
-
-	Aresta(int v1 = 0, int v2 = 0, int peso = 0)
-	{
-		vertice1 = v1;
-		vertice2 = v2;
-		this->peso = peso;
-	}
-
-	int obterVertice1()
-	{
-		return vertice1;
-	}
-
-	int obterVertice2()
-	{
-		return vertice2;
-	}
-
-	int obterPeso()
-	{
-		return peso;
-	}
-
-    
-        // sobrescrita do operador "<"
-        bool operator < (const Aresta& aresta2) const
-        {
-            return (peso < aresta2.peso);
-        }
-    
-	
-};
-
-class Grafo
-{
-	int N; // número de vértices
-	//vector<Aresta> arestas; // vetor de arestas
-    Aresta grafo[nVerticesMax];
-	int N_atual;
-	int pai[nVerticesMax];
-	
-
-public:
-
-	Grafo(int N)
-	{
-		this->N = N;
-	}
-
-	int obterNumVertices()
-	{
-		return N;
-	}
-
-	// função que adiciona uma aresta
-	void adicionarAresta(int v1, int v2, int peso){
-		Aresta aresta_aux(v1, v2, peso);
-		if(N_atual < N)
-            grafo[N_atual++] = aresta_aux;
-	}
-
-    void inicializaPai(int pai[nVerticesMax]){
-	   
-	   	for(int i = 0; i < N; i++) {
-		   pai[i] = i;
-   		}
+// Inicia cada vértice como representante de si próprio.
+void iniciaPai(int n){
+    for(int i = 0; i <= n; i++){
+        pai[i] = i;
     }
-	bool same_set(int x, int y){
-    	if(pai[x] == pai[y]) return true;
-    	else return false;
-	}
-	void join(int x, int y){
-		int aux = pai[x];
-		if(!same_set(x,y))
-		{
-			for (int i = 0; i < N; i++)
-			{
-				if (pai[i] == aux)
-				{
-					pai[i] = pai[y];
-				}
-			}
-		}
-	}
+}
+// Checa se dois vértices pertencem ao mesmo subset. Isso indica que, caso uma aresta seja colocada entre
+// esses vértices, formará um ciclo, deixando, assim, de ser uma árvore.
+bool same_set(int x, int y){
+        cout << "\nEntrou same-set\n";
+        if(pai[x] == pai[y]) return true;
+        else return false;
+}
+// Faz com que o pai de y seja pai também de x e de todos os vértices que eram representados por x.
+void join(int x, int y, int n){
+    cout << "\nEntrou join\n";
+    int aux = pai[x];
+    for (int i = 0; i < n; i++) {
+        if (pai[i] == aux) {
+            pai[i] = pai[y];
+        }
+    }
+}
 
-	static void merge (int p, int q, int r, Aresta grafo[]){
-		Aresta *w;                                 //  1
-		w = (Aresta *)malloc ((r-p) * sizeof (Aresta));     //  2
-		int i = p, j = q;                       //  3
-		int k = 0;                              //  4
+// Merge genérico funcional
+// Complexidade(O(n))
+void merge(Aresta grafo[MAX], int p, int q, int r) {
+    int n1 = q - p + 1; // limite do vetor esquerdo (L)
+    int n2 = r - q; // limite do vetor direito (R)
+    Aresta L[n1+1], R[n2+1];
 
-		while (i < q && j < r) {                //  5
-			if (grafo[i].obterPeso() <= grafo[j].obterPeso())  w[k++] = grafo[i++];  //  6
-			else  w[k++] = grafo[j++];               //  7
-		}                                       //  8
-		while (i < q)  w[k++] = grafo[j++];         //  9
-		while (j < r)  w[k++] = grafo[j++];         // 10
-		for (i = p; i < r; ++i)  grafo[i] = w[i-p]; // 11
-		free (w);                               // 12
-	}
-	void mergesort (int p, int r, Aresta grafo[]){
-		if (p < r-1) {                 // 1
-			int q = (p + r)/2;          // 2
-			mergesort (p, q, grafo);        // 3
-			mergesort (q, r, grafo);        // 4
-			merge (p, q, r, grafo);     // 5
-		}
-	}
+    // preenche os vetores auxiliares
+    // L = vetor[p...q]
+    // R = vetor[q+1...r]
+    for (int i = 0; i < n1; i++){
+        L[i].peso = grafo[p+i].peso; // sem o -1
+        L[i].vertice1 = grafo[p+i].vertice1;
+        L[i].vertice2 = grafo[p+i].vertice2;
+    }
 
-	/// função que roda o algoritmo de Kruskal
-	void kruskal()
-	{
-		Aresta arvore[100];
-		int size_arestas = obterNumVertices();
+    for (int i=0; i < n2; i++){
+        R[i].peso = grafo[q+i+1].peso; // com o +1
+        R[i].vertice1 = grafo[q+i+1].vertice1;
+        R[i].vertice2 = grafo[q+i+1].vertice2;
+    }
 
-		int pai[nVerticesMax];
-		inicializaPai(pai);
-        
-		// ordena as arestas pelo menor peso
-		mergesort(0,N,this->grafo); //sort(arestas.begin(), arestas.end());
+    // o ultimo elemento dos vetores auxiliares é infinito (apenas para fins de parada)
+    L[n1].peso = __INT_MAX__; L[n1].vertice1 = __INT_MAX__; L[n1].vertice2 = __INT_MAX__;
+    R[n2].peso = __INT_MAX__; R[n2].vertice1 = __INT_MAX__; R[n2].vertice2 = __INT_MAX__;
 
-		int size = 0;
-        for(int i = 0; i < size_arestas; i++)
-		{
-			
-			if(!same_set(Grafo::grafo[i].obterVertice1(),Grafo::grafo[i].obterVertice2()))
-			{
-				// se forem diferentes é porque NÃO forma ciclo, insere no vetor
-				arvore[++size] = this->grafo[i];
-				join(this->grafo[i].obterVertice1(),Grafo::grafo[i].obterVertice2()); // faz a união
-			}
-		}
+    int i=0; // começa de 0
+    int j=0; // começa de 0
 
-		//int size_arvore = arvore.size();
+    for (int k=p; k<=r; k++){
+        if (L[i].peso <= R[j].peso){ // se o i-ésimo elemento de L é menor, inserimos no vetor
+            grafo[k].peso = L[i].peso;
+            grafo[k].vertice1 = L[i].vertice1;
+            grafo[k].vertice2 = L[i].vertice2;
+            i++;
+        } else {
+            grafo[k].peso = R[j].peso;
+            grafo[k].vertice1 = R[j].vertice1;
+            grafo[k].vertice2 = R[j].vertice2;
+            j++;
+        }
+    }
+}
+// complexidade = O(nlogn)
+void mergeSort(Aresta grafo[MAX], int comeco, int fim){
+    if (comeco < fim) {
+        int meio = (fim+comeco)/2;
 
-		// mostra as arestas selecionadas com seus respectivos pesos
-		for(int i = 0; i < size; i++)
-		{
-			char v1 = 'A' + arvore[i].obterVertice1();
-			char v2 = 'A' + arvore[i].obterVertice2();
-			cout << "(" << v1 << ", " << v2 << ") = " << arvore[i].obterPeso() << endl;
-		}
-	}
-};
+        mergeSort(grafo, comeco, meio);
+        mergeSort(grafo, meio+1, fim);
+        merge(grafo, comeco, meio, fim); // O(n)
+    }
+}
 
+int main(){
 
+    Grafo g;
+    Grafo arvore;
 
-int main(int argc, char *argv[])
-{
-	Grafo g(7); // grafo
-	
-	// adiciona as arestas
-	g.adicionarAresta(0, 1, 7);
-	g.adicionarAresta(0, 3, 5);
-	g.adicionarAresta(1, 2, 8);
-	g.adicionarAresta(1, 3, 9);
-	g.adicionarAresta(1, 4, 7);
-	g.adicionarAresta(2, 4, 5);
-	g.adicionarAresta(3, 4, 15);
-	g.adicionarAresta(3, 5, 6);
-	g.adicionarAresta(4, 5, 8);
-	g.adicionarAresta(4, 6, 9);
-	g.adicionarAresta(5, 6, 11);
-	
-	g.kruskal(); // roda o algoritmo de Kruskal
-	
-	return 0;
+    g.n = 10;
+    g.m = 15;
+
+    g.grafo[0].vertice1 = 0; g.grafo[0].vertice2 = 1; g.grafo[0].peso = 6;
+    g.grafo[1].vertice1 = 0; g.grafo[1].vertice2 = 3; g.grafo[1].peso = 1;
+    g.grafo[2].vertice1 = 0; g.grafo[2].vertice2 = 4; g.grafo[2].peso = 4;
+    g.grafo[3].vertice1 = 1; g.grafo[3].vertice2 = 2; g.grafo[3].peso = 5;
+    g.grafo[4].vertice1 = 1; g.grafo[4].vertice2 = 4; g.grafo[4].peso = 1;
+    g.grafo[5].vertice1 = 2; g.grafo[5].vertice2 = 5; g.grafo[5].peso = 2;
+    g.grafo[6].vertice1 = 3; g.grafo[6].vertice2 = 4; g.grafo[6].peso = 8;
+    g.grafo[7].vertice1 = 3; g.grafo[7].vertice2 = 6; g.grafo[7].peso = 8;
+    g.grafo[8].vertice1 = 4; g.grafo[8].vertice2 = 5; g.grafo[8].peso = 5;
+    g.grafo[9].vertice1 = 4; g.grafo[9].vertice2 = 6; g.grafo[9].peso = 7;
+    g.grafo[10].vertice1 = 4; g.grafo[10].vertice2 = 7; g.grafo[10].peso = 1;
+    g.grafo[11].vertice1 = 5; g.grafo[11].vertice2 = 8; g.grafo[11].peso = 6;
+    g.grafo[12].vertice1 = 6; g.grafo[12].vertice2 = 7; g.grafo[12].peso = 10;
+    g.grafo[13].vertice1 = 7; g.grafo[13].vertice2 = 8; g.grafo[13].peso = 12;
+    g.grafo[14].vertice1 = 7; g.grafo[14].vertice2 = 9; g.grafo[14].peso = 7;
+
+    for(int i = 0; i < g.m; i++){
+        cout << "(" << g.grafo[i].vertice1 << " , " << g.grafo[i].vertice2 << ")" << " = " << g.grafo[i].peso << endl;
+    }
+
+    cout << endl << endl;
+
+    mergeSort(g.grafo,0,g.m - 1);
+
+    for(int i = 0; i < g.m; i++){
+        cout << "(" << g.grafo[i].vertice1 << " , " << g.grafo[i].vertice2 << ")" << " = " << g.grafo[i].peso << endl;
+    }
+
+    int size_arvore = 0;
+
+    iniciaPai(g.n);
+
+    for(int i = 0; i < g.m; i++)
+    {
+        if(!same_set(g.grafo[i].vertice1,g.grafo[i].vertice2))
+        {
+            // se forem diferentes é porque NÃO forma ciclo, insere no vetor
+            arvore.grafo[size_arvore].vertice1 = g.grafo[i].vertice1;
+            arvore.grafo[size_arvore].vertice2 = g.grafo[i].vertice2;
+            arvore.grafo[size_arvore].peso = g.grafo[i].peso;
+            size_arvore++;
+
+            join(g.grafo[i].vertice1,g.grafo[i].vertice2,g.n); // faz a união
+        }
+    }
+    for(int i = 0; i < size_arvore; i++){
+        cout << "(" << arvore.grafo[i].vertice1 << " , " << arvore.grafo[i].vertice2 << ")" << " = " << arvore.grafo[i].peso << endl;
+    }
 }
