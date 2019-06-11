@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <vector>
+#include <stdlib.h>
 using namespace std;
 #define nVerticesMax 100
 
@@ -135,7 +136,7 @@ public:
 		inicializaPai(pai);
         
 		// ordena as arestas pelo menor peso
-		mergesort(0,N,Grafo::grafo); //sort(arestas.begin(), arestas.end());
+		mergesort(0,N,this->grafo); //sort(arestas.begin(), arestas.end());
 
 		int size = 0;
         for(int i = 0; i < size_arestas; i++)
@@ -144,15 +145,15 @@ public:
 			if(!same_set(Grafo::grafo[i].obterVertice1(),Grafo::grafo[i].obterVertice2()))
 			{
 				// se forem diferentes é porque NÃO forma ciclo, insere no vetor
-				arvore[++size] = Grafo::grafo[i];
-				join(Grafo::grafo[i].obterVertice1(),Grafo::grafo[i].obterVertice2()); // faz a união
+				arvore[++size] = this->grafo[i];
+				join(this->grafo[i].obterVertice1(),Grafo::grafo[i].obterVertice2()); // faz a união
 			}
 		}
 
-		int size_arvore = arvore.size();
+		//int size_arvore = arvore.size();
 
 		// mostra as arestas selecionadas com seus respectivos pesos
-		for(int i = 0; i < size_arvore; i++)
+		for(int i = 0; i < size; i++)
 		{
 			char v1 = 'A' + arvore[i].obterVertice1();
 			char v2 = 'A' + arvore[i].obterVertice2();
