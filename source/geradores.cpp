@@ -6,7 +6,7 @@ ofstream grid, completo;
 
 void GrafoCompleto(int n)
 {
-    string name = "../completo/"+to_string(n) +"completo.in";
+    string name = to_string(n) +"completo.in";
     completo.open(name);
     completo << n<<endl;
 
@@ -23,7 +23,7 @@ void GrafoCompleto(int n)
 void GrafoGrid(int n)
 {
 
-    string name = "../grid/"+to_string(n) +"grid.in";
+    string name = to_string(n) +"grid.in";
     grid.open(name);
     grid<<n<<endl;
 
@@ -52,9 +52,8 @@ int main()
     GrafoCompleto(num);
     }
 
-     for(int i=0, num =6; i<10;i++){
-    num = num +2;
-    cout<<num<<" ";
+     for(int i=0; i<10;i++){
+    int num = (rand() % 15) + 1;
     GrafoGrid(num);
     }
     return 0;

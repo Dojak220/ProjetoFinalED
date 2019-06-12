@@ -18,6 +18,7 @@ int main()
         cont++;
     }
     g.m = cont;
+    cout<<g.m;
 
     Kruskal(g, g.m,g.n);
 

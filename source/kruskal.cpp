@@ -91,47 +91,26 @@ void mergeSort(Aresta grafo[MAX], int comeco, int fim){
     }
 }
 
-void Kruskal(Grafo g, int m, int n){
-
-
+void Kruskal(Grafo g, int arestas, int vertices){
     Grafo arvore;
 
-    g.n = n;
-    g.m = m;
-
-    g.grafo[0].vertice1 = 0; g.grafo[0].vertice2 = 1; g.grafo[0].peso = 6;
-    g.grafo[1].vertice1 = 0; g.grafo[1].vertice2 = 3; g.grafo[1].peso = 1;
-    g.grafo[2].vertice1 = 0; g.grafo[2].vertice2 = 4; g.grafo[2].peso = 4;
-    g.grafo[3].vertice1 = 1; g.grafo[3].vertice2 = 2; g.grafo[3].peso = 5;
-    g.grafo[4].vertice1 = 1; g.grafo[4].vertice2 = 4; g.grafo[4].peso = 1;
-    g.grafo[5].vertice1 = 2; g.grafo[5].vertice2 = 5; g.grafo[5].peso = 2;
-    g.grafo[6].vertice1 = 3; g.grafo[6].vertice2 = 4; g.grafo[6].peso = 8;
-    g.grafo[7].vertice1 = 3; g.grafo[7].vertice2 = 6; g.grafo[7].peso = 8;
-    g.grafo[8].vertice1 = 4; g.grafo[8].vertice2 = 5; g.grafo[8].peso = 5;
-    g.grafo[9].vertice1 = 4; g.grafo[9].vertice2 = 6; g.grafo[9].peso = 7;
-    g.grafo[10].vertice1 = 4; g.grafo[10].vertice2 = 7; g.grafo[10].peso = 1;
-    g.grafo[11].vertice1 = 5; g.grafo[11].vertice2 = 8; g.grafo[11].peso = 6;
-    g.grafo[12].vertice1 = 6; g.grafo[12].vertice2 = 7; g.grafo[12].peso = 10;
-    g.grafo[13].vertice1 = 7; g.grafo[13].vertice2 = 8; g.grafo[13].peso = 12;
-    g.grafo[14].vertice1 = 7; g.grafo[14].vertice2 = 9; g.grafo[14].peso = 7;
-
     cout << "Grafo original: \n";
-    for(int i = 0; i < g.m; i++){
+    for(int i = 0; i < arestas; i++){
         cout << "(" << g.grafo[i].vertice1 << " , " << g.grafo[i].vertice2 << ")" << " = " << g.grafo[i].peso << endl;
     }
 
-    mergeSort(g.grafo,0,g.m - 1);
+    mergeSort(g.grafo,0,arestas - 1);
 
     cout << "\n\nGrafo ordenado: \n";
-    for(int i = 0; i < g.m; i++){
+    for(int i = 0; i < arestas; i++){
         cout << "(" << g.grafo[i].vertice1 << " , " << g.grafo[i].vertice2 << ")" << " = " << g.grafo[i].peso << endl;
     }
 
     int size_arvore = 0;
 
-    iniciaPai(g.n);
+    iniciaPai(vertices);
 
-    for(int i = 0; i < g.m; i++)
+    for(int i = 0; i < arestas; i++)
     {
         if(!same_set(g.grafo[i].vertice1,g.grafo[i].vertice2))
         {
@@ -141,7 +120,7 @@ void Kruskal(Grafo g, int m, int n){
             arvore.grafo[size_arvore].peso = g.grafo[i].peso;
             size_arvore++;
 
-            join(g.grafo[i].vertice1,g.grafo[i].vertice2,g.n); // faz a união
+            join(g.grafo[i].vertice1,g.grafo[i].vertice2,vertices); // faz a união
         }
     }
     cout << "\n\nÁrvore geradora: \n";
