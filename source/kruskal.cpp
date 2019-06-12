@@ -91,13 +91,13 @@ void mergeSort(Aresta grafo[MAX], int comeco, int fim){
     }
 }
 
-int main(){
+void Kruskal(Grafo g, int m, int n){
 
-    Grafo g;
+
     Grafo arvore;
 
-    g.n = 10;
-    g.m = 15;
+    g.n = n;
+    g.m = m;
 
     g.grafo[0].vertice1 = 0; g.grafo[0].vertice2 = 1; g.grafo[0].peso = 6;
     g.grafo[1].vertice1 = 0; g.grafo[1].vertice2 = 3; g.grafo[1].peso = 1;
@@ -119,7 +119,7 @@ int main(){
     for(int i = 0; i < g.m; i++){
         cout << "(" << g.grafo[i].vertice1 << " , " << g.grafo[i].vertice2 << ")" << " = " << g.grafo[i].peso << endl;
     }
-    
+
     mergeSort(g.grafo,0,g.m - 1);
 
     cout << "\n\nGrafo ordenado: \n";
