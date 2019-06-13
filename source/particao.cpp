@@ -3,7 +3,16 @@
 #include <fstream>
 #include "kruskal.h"
 using namespace std;
-
+void set_grafo(Grafo &grafo, Grafo &grafo3){
+    for (int i = 0; i <= grafo.m; i++)
+    {
+        grafo.grafo = (Aresta *)realloc(grafo.grafo, (i + 1) * sizeof(Aresta));
+        grafo.grafo[i].vertice1 = grafo3.grafo[i].vertice1;
+        grafo.grafo[i].vertice2 = grafo3.grafo[i].vertice2;
+        grafo.grafo[i].peso = grafo3.grafo[i].peso;
+        grafo.grafo[i].marcacao = grafo3.grafo[i].marcacao;
+    }
+}
 int main()
 {
     Grafo grafo1, grafo2;
@@ -24,63 +33,44 @@ int main()
     g.m = cont;
 
     Grafo grafo3 = Kruskal(g, g.m, g.n);
-    grafo2.grafo = (Aresta *)malloc(sizeof(Aresta));
-    grafo1.grafo = (Aresta *)malloc(sizeof(Aresta));
-    for (int i = 0; i <= g.m; i++)
-    {
-        grafo2.grafo = (Aresta *)realloc(grafo2.grafo, (i + 1) * sizeof(Aresta));
-        grafo2.grafo[i].vertice1 = grafo3.grafo[i].vertice1;
-        grafo2.grafo[i].vertice2 = grafo3.grafo[i].vertice2;
-        grafo2.grafo[i].peso = grafo3.grafo[i].peso;
-        grafo2.grafo[i].marcacao = grafo3.grafo[i].marcacao;
-    }
-    for (int i = 0; i <= g.m; i++)
-    {
-        grafo1.grafo = (Aresta *)realloc(grafo1.grafo, (i + 1) * sizeof(Aresta));
-        grafo1.grafo[i].vertice1 = grafo3.grafo[i].vertice1;
-        grafo1.grafo[i].vertice2 = grafo3.grafo[i].vertice2;
-        grafo1.grafo[i].peso = grafo3.grafo[i].peso;
-        grafo1.grafo[i].marcacao = grafo3.grafo[i].marcacao;
-    }
+    grafo2.grafo = (Aresta*)malloc(sizeof(Aresta));
+    grafo1.grafo = (Aresta*)malloc(sizeof(Aresta));
+    Grafo *lista = (Grafo*)malloc(sizeof(Grafo));
 
+    set_grafo(grafo2,grafo3);
+    set_grafo(grafo1,grafo3);
+    
     int soma = 0;
-    int tamanho = sizeof(grafo3)/sizeof(int);
+    int tamanho = sizeof(grafo3) / sizeof(int);
     cout << tamanho << endl;
-    Grafo final2[35];
-    cont=0;
-
+    cont = 0;
     grafo1.grafo[0].marcacao = 2;
     g.grafo[0].marcacao = grafo1.grafo[0].marcacao;
-    for (int j = 0; j < 4; j++)
-        {
-            cout << g.grafo[j].marcacao << " ";
-        }
-        cout<<endl;
-    for (int i = 0; i < tamanho-1; i++)
+    Grafo hhhh;
+    hhhh.grafo = (Aresta*)malloc(sizeof(Aresta));
+    set_grafo(hhhh,grafo3);
+    for (int j = 0; j < tamanho; j++)
+            {
+                cout << hhhh.grafo[j].peso << " ";
+            }
+    cout << endl;
+    for (int i = 0; i < tamanho - 1; i++)
     {
         if (grafo3.grafo[i].marcacao == 0)
         {
-            
-            grafo1.grafo[i+1].marcacao = 2;
+
+            grafo1.grafo[i + 1].marcacao = 2;
             grafo1.grafo[i].marcacao = 1;
 
             for (int j = 0; j < 4; j++)
             {
                 g.grafo[j].marcacao = grafo1.grafo[j].marcacao;
             }
-            for (int j = 0; j < 4; j++)
-        {
-            // g.grafo[i].marcacao = grafo1.grafo[i].marcacao;
-            cout << g.grafo[j].marcacao << " ";
         }
-        cout << endl;
-
-            final2[cont] = Kruskal(grafo1, g.m, g.n);
-            cont++;
-
-            //grafo1.grafo[i].marcacao = grafo2.grafo[i].marcacao;
-        }
+        
     }
-      
+    
+            
+            
     free(g.grafo);
 }

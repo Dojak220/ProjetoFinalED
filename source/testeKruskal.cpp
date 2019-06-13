@@ -6,7 +6,7 @@ using namespace std;
 
 int main()
 {
-    ifstream infile("exemplo.in");
+    ifstream infile("ex2.in");
     Grafo g;
     g.grafo = (Aresta*)malloc(sizeof(Aresta));
     infile >> g.n;
