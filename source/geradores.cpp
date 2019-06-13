@@ -6,7 +6,7 @@ ofstream grid, completo;
 
 void GrafoCompleto(int n)
 {
-    string name = to_string(n) +"completo.in";
+    string name = "../completo/"+to_string(n) +"completo.in";
     completo.open(name);
     completo << n<<endl;
 
@@ -14,7 +14,7 @@ void GrafoCompleto(int n)
     {
         for(int j=i; j<n; j++)
         {
-            completo << i + 1 <<" "<< j + 1 <<" "<< (rand() % 100) + 1 <<endl;
+            completo << i  <<" "<< j  <<" "<< (rand() % 100) + 1 <<endl;
         }
     }
     completo.close();
@@ -23,7 +23,7 @@ void GrafoCompleto(int n)
 void GrafoGrid(int n)
 {
 
-    string name = to_string(n) +"grid.in";
+    string name ="../grid/"+to_string(n) +"grid.in";
     grid.open(name);
     grid<<n<<endl;
 
