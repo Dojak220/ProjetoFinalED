@@ -19,8 +19,6 @@ int main()
         g.grafo[cont].peso = c;
         g.grafo[cont].marcacao = d; 
         cont++;
-        
-        
     }
     g.m = cont;
     

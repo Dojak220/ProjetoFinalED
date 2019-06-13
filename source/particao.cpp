@@ -6,7 +6,7 @@ using namespace std;
 
 int main()
 {
-    Grafo grafo1, grafo2, resultado, final[4], final2[100];
+    Grafo grafo1, grafo2;
     ifstream infile2("ex2.in");
     Grafo g;
     g.grafo = (Aresta *)malloc(sizeof(Aresta));
@@ -24,51 +24,63 @@ int main()
     g.m = cont;
 
     Grafo grafo3 = Kruskal(g, g.m, g.n);
-    memcpy(cpy, a, ele * sizeof *cpy);
-    grafo2 = grafo3;
-    grafo1 = grafo3;
+    grafo2.grafo = (Aresta *)malloc(sizeof(Aresta));
+    grafo1.grafo = (Aresta *)malloc(sizeof(Aresta));
+    for (int i = 0; i <= g.m; i++)
+    {
+        grafo2.grafo = (Aresta *)realloc(grafo2.grafo, (i + 1) * sizeof(Aresta));
+        grafo2.grafo[i].vertice1 = grafo3.grafo[i].vertice1;
+        grafo2.grafo[i].vertice2 = grafo3.grafo[i].vertice2;
+        grafo2.grafo[i].peso = grafo3.grafo[i].peso;
+        grafo2.grafo[i].marcacao = grafo3.grafo[i].marcacao;
+    }
+    for (int i = 0; i <= g.m; i++)
+    {
+        grafo1.grafo = (Aresta *)realloc(grafo1.grafo, (i + 1) * sizeof(Aresta));
+        grafo1.grafo[i].vertice1 = grafo3.grafo[i].vertice1;
+        grafo1.grafo[i].vertice2 = grafo3.grafo[i].vertice2;
+        grafo1.grafo[i].peso = grafo3.grafo[i].peso;
+        grafo1.grafo[i].marcacao = grafo3.grafo[i].marcacao;
+    }
+
     int soma = 0;
     int tamanho = sizeof(grafo3)/sizeof(int);
     cout << tamanho << endl;
+    Grafo final2[35];
+    cont=0;
 
-    
-    for (int i = 0; i < tamanho; i++)
+    grafo1.grafo[0].marcacao = 2;
+    g.grafo[0].marcacao = grafo1.grafo[0].marcacao;
+    for (int j = 0; j < 4; j++)
+        {
+            cout << g.grafo[j].marcacao << " ";
+        }
+        cout<<endl;
+    for (int i = 0; i < tamanho-1; i++)
     {
         if (grafo3.grafo[i].marcacao == 0)
         {
-
-            grafo1.grafo[i].marcacao = 2;
+            
+            grafo1.grafo[i+1].marcacao = 2;
+            grafo1.grafo[i].marcacao = 1;
 
             for (int j = 0; j < 4; j++)
             {
-                g.grafo[i].marcacao = grafo1.grafo[i].marcacao;
-                cout << grafo1.grafo[j].marcacao << " ";
+                g.grafo[j].marcacao = grafo1.grafo[j].marcacao;
             }
-            cout << endl;
+            for (int j = 0; j < 4; j++)
+        {
+            // g.grafo[i].marcacao = grafo1.grafo[i].marcacao;
+            cout << g.grafo[j].marcacao << " ";
+        }
+        cout << endl;
 
-            for (int i = 0; i < cont; i++)
-            {
-                cout << "(" << g.grafo[i].vertice1 << " , " << g.grafo[i].vertice2 << ")"
-                     << " = " << g.grafo[i].peso << " m " << g.grafo[i].marcacao << endl;
-            }
-            //final2[cont] = Kruskal(grafo1, g.m, g.n);
-            //cont++;
+            final2[cont] = Kruskal(grafo1, g.m, g.n);
+            cont++;
 
-            grafo2.grafo[i].marcacao = 1;
-
-            grafo1 = grafo2;
+            //grafo1.grafo[i].marcacao = grafo2.grafo[i].marcacao;
         }
     }
-
-    // for (int j = 0; j < cont; j++)
-    // {
-    //     for (int i = 0; i < 4; i++)
-    //     {
-    //         soma = soma + final2[j].grafo[i].peso;
-    //     }
-    //     cout << soma << endl;
-    //     soma = 0;
-    // }
-
+      
     free(g.grafo);
 }
