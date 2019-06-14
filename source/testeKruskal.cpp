@@ -8,15 +8,15 @@ int main()
 {
     ifstream infile("../completo/22completo.in");
     Grafo g;
-    g.grafo = (Aresta*)malloc(sizeof(Aresta));
+    g.aresta = (Aresta*)malloc(sizeof(Aresta));
     infile >> g.n;
     int a, b, c, d, cont = 0;
-    while (infile >> a >> b >> c)
+    while (infile >> a >> b >> c >>d)
     {
-        g.grafo = (Aresta*)realloc(g.grafo,(cont+1)*sizeof(Aresta));
-        g.grafo[cont].vertice1 = a;
-        g.grafo[cont].vertice2 = b;
-        g.grafo[cont].peso = c;
+        g.aresta = (Aresta*)realloc(g.aresta,(cont+1)*sizeof(Aresta));
+        g.aresta[cont].vertice1 = a;
+        g.aresta[cont].vertice2 = b;
+        g.aresta[cont].peso = c;
         cont++;
     }
     g.m = cont;
@@ -28,8 +28,8 @@ int main()
     cout << "\n\nÁrvore geradora: \n";
     for (int i = 0; i < g.n-1; i++)
     {
-        cout << "(" << resultado.grafo[i].vertice1 << " , " << resultado.grafo[i].vertice2 << ")"
-             << " = " << resultado.grafo[i].peso << endl;
+        cout << "(" << resultado.aresta[i].vertice1 << " , " << resultado.aresta[i].vertice2 << ")"
+             << " = " << resultado.aresta[i].peso << endl;
     }
-    free(g.grafo);
+    free(g.aresta);
 }

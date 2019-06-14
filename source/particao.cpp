@@ -140,8 +140,6 @@ int main()
 
     cont = 0;
     clona_grafo(GF[cont].final,original,num_op(original));
-    cont+=2;
-    
     
     for (int i = 0; i < num_op(grafo3); i++)
     {
