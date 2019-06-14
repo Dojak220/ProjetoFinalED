@@ -12,9 +12,9 @@ void GrafoCompleto(int n)
 
     for(int i=0; i<n; i++)
     {
-        for(int j=i; j<n; j++)
+        for(int j=i+1; j<n; j++)
         {
-            completo << i  <<" "<< j  <<" "<< (rand() % 100) + 1 <<endl;
+            completo << i  <<" "<< j  <<" "<< (rand() % 100) + 1<<endl;
         }
     }
     completo.close();
@@ -28,7 +28,7 @@ void GrafoGrid(int n)
     grid<<n<<endl;
 
     int meio = n/2;
-    for(int i = 1; i<meio; i++)
+    for(int i = 0; i<meio; i++)
     {
         grid<< i <<" "<<i+1<<" "<< (rand() % 100) + 1<<endl;
     }
@@ -38,7 +38,7 @@ void GrafoGrid(int n)
     }
     for(int i = 0, meio2 = meio; i<meio; i++, meio2++)
     {
-        grid<< i + 1 <<" "<<meio2+1<<" "<< (rand() % 100) + 1<<endl;
+        grid<< i + 1 <<" "<<meio2<<" "<< (rand() % 100) + 1<<endl;
     }
     grid.close();
 }
@@ -48,12 +48,12 @@ int main()
 
 
     for(int i=0; i<5;i++){
-    int num = (rand() % 15) + 1;
+    int num = (rand() % 35) + 1;
     GrafoCompleto(num);
     }
 
      for(int i=0; i<10;i++){
-    int num = (rand() % 15) + 1;
+    int num = (rand() % 35) + 1;
     GrafoGrid(num);
     }
     return 0;

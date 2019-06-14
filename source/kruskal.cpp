@@ -124,15 +124,19 @@ void mergeSort(Aresta *grafo, int comeco, int fim)
 
 Grafo Kruskal(Grafo g, int arestas, int vertices)
 {
-      /*cout << "Grafo original: \n";
-    for(int i = 0; i < arestas; i++){
-        cout << "(" << g.grafo[i].vertice1 << " , " << g.grafo[i].vertice2 << ")" << " = " << g.grafo[i].peso << endl;
-    }*/
+    // cout << "Grafo original: \n";
+    // for(int i = 0; i < arestas; i++){
+    //     cout << "(" << g.grafo[i].vertice1 << " , " << g.grafo[i].vertice2 << ")" 
+    //     << " = " << g.grafo[i].peso <<" Mark " << g.grafo[i].marcacao << endl;
+    // }
+
     mergeSort(g.grafo, 0, arestas - 1);
-     /*cout << "\n\nGrafo ordenado: \n";
-    for(int i = 0; i < arestas; i++){
-        cout << "(" << g.grafo[i].vertice1 << " , " << g.grafo[i].vertice2 << ")" << " = " << g.grafo[i].peso << endl;
-    }*/
+
+    // cout << "\n\nGrafo ordenado: \n";
+    // for(int i = 0; i < arestas; i++){
+    //     cout << "(" << g.grafo[i].vertice1 << " , " << g.grafo[i].vertice2 << ")" 
+    //     << " = " << g.grafo[i].peso <<" Mark " << g.grafo[i].marcacao << endl;
+    // }
 
     Grafo arvore;
     arvore.grafo = (Aresta*)malloc(sizeof(Aresta));
@@ -148,6 +152,7 @@ Grafo Kruskal(Grafo g, int arestas, int vertices)
             arvore.grafo[size_arvore].vertice1 = g.grafo[i].vertice1;
             arvore.grafo[size_arvore].vertice2 = g.grafo[i].vertice2;
             arvore.grafo[size_arvore].peso = g.grafo[i].peso;
+            arvore.grafo[size_arvore].marcacao = g.grafo[i].marcacao;
             size_arvore++;        
             join(g.grafo[i].vertice1, g.grafo[i].vertice2, vertices); // faz a união
         }else if(!same_set(g.grafo[i].vertice1,g.grafo[i].vertice2) && g.grafo[i].marcacao == 0)
@@ -158,14 +163,12 @@ Grafo Kruskal(Grafo g, int arestas, int vertices)
             arvore.grafo[size_arvore].vertice1 = g.grafo[i].vertice1;
             arvore.grafo[size_arvore].vertice2 = g.grafo[i].vertice2;
             arvore.grafo[size_arvore].peso = g.grafo[i].peso;
+            arvore.grafo[size_arvore].marcacao = g.grafo[i].marcacao;
             size_arvore++;
             join(g.grafo[i].vertice1,g.grafo[i].vertice2,vertices); // faz a união
         }
-        
     }
-    free(g.grafo);
-    free(pai);
-    free(arvore.grafo);
-    
+    arvore.m = g.m;
+    arvore.n = g.n;
   return arvore;
 }

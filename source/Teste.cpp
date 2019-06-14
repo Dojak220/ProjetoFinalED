@@ -1,14 +1,22 @@
 #include <iostream>
 #include "kruskal.h"
 #include <fstream>
+#include <string.h>
 
 using namespace std;
+
+typedef struct GrafoFinal
+{
+    Grafo final;
+    int matAdj[35][35] = {0};
+} GrafoFinal;
 
 int main()
 {
     ifstream infile("ex2.in");
     Grafo g;
-    g.grafo = (Aresta*)malloc(sizeof(Aresta));
+    GrafoFinal gf = (GrafoFinal)malloc(sizeof(GrafoFinal));
+    gf.final.grafo = (Aresta*)malloc(sizeof(Aresta));
     infile >> g.n;
     int a, b, c, d, cont = 0;
     while (infile >> a >> b >> c >>d)
@@ -19,13 +27,15 @@ int main()
         g.grafo[cont].peso = c;
         g.grafo[cont].marcacao = d; 
         cont++;
-        
     }
-    g.m = cont;
     
-    for (int i = 0; i < g.m; i++)
-    {
-        cout << "(" << g.grafo[i].vertice1 << " , " << g.grafo[i].vertice2 << ")"
-             << " = " << g.grafo[i].peso << endl;
-    }
+    gf.final.grafo[0].marcacao=20;
+    gf = (GrafoFinal*)realloc(gf,2*sizeof(GrafoFinal));
+    gf[1].final.grafo = (Aresta*)malloc(sizeof(Aresta));
+    gf[1].final.grafo[0].marcacao=20;
+    gf = (GrafoFinal*)realloc(gf,3*sizeof(GrafoFinal));
+    gf[2].final.grafo = (Aresta*)malloc(sizeof(Aresta));
+    gf[2].final.grafo[0].marcacao=20;
+
+
 }
