@@ -3,21 +3,16 @@
 #include <fstream>
 #include "kruskal.h"
 using namespace std;
-typedef struct GrafoFinal
-{
-    Grafo final;
-    int matAdj[35][35] = {0};
-} GrafoFinal;
 
-
-bool connect(GrafoFinal verif, int tam)
+bool connect(int tam, int (*matAdj)[35])
 {
+    
     int ver = true;
     for (int i = 0; i < tam; i++)
     {
-        for (int j = 0; j < i; j++)
+        for (int j = 0; j < tam; j++)
         {
-            if (verif.matAdj[i][j] == 1)
+            if (matAdj[i][j] == 1)
             {
                 ver = true;
                 break;
@@ -28,84 +23,79 @@ bool connect(GrafoFinal verif, int tam)
     }
     return ver;
 }
-void clona_grafo(Grafo &grafo, Grafo &grafo3, int tamanho)
+void clona_grafo(Grafo &grafo, Grafo grafo3, int tamanho)
 {
     for (int i = 0; i <= tamanho; i++)
     {
-        grafo.grafo = (Aresta *)realloc(grafo.grafo, (i + 1) * sizeof(Aresta));
-        grafo.grafo[i].vertice1 = grafo3.grafo[i].vertice1;
-        grafo.grafo[i].vertice2 = grafo3.grafo[i].vertice2;
-        grafo.grafo[i].peso = grafo3.grafo[i].peso;
-        grafo.grafo[i].marcacao = grafo3.grafo[i].marcacao;
+        grafo.aresta = (Aresta *)realloc(grafo.aresta, (i + 1) * sizeof(Aresta));
+        grafo.aresta[i].vertice1 = grafo3.aresta[i].vertice1;
+        grafo.aresta[i].vertice2 = grafo3.aresta[i].vertice2;
+        grafo.aresta[i].peso = grafo3.aresta[i].peso;
+        grafo.aresta[i].marcacao = grafo3.aresta[i].marcacao;
     }
     grafo.n = grafo3.n;
     grafo.m = grafo3.m;
 }
-void mudaMatriz(int tam, GrafoFinal &GF, Aresta aresta, int mat[35][35], int muda)
+void mudaMatriz(int tam, int (*matAdj)[35], Aresta aresta, int mat[35][35])
 {
-
-    // for (int i = 0; i < tam; i++)
-    // {
-    //     for (int j = 0; j < tam; j++)
-    //     {
-    //         cout << mat[i][j] << " ";
-    //     }
-    //     cout << endl;
-    // }
-    // cout << endl;
-
-    if (muda == 0)
+    for (int i = 0; i < tam - 1; i++)
     {
-        for (int i = 0; i < tam - 1; i++)
+        for (int j = 0; j < tam - 1; j++)
         {
-            for (int j = 0; j < tam - 1; j++)
-            {
-                GF.matAdj[i][j] = mat[i][j];
-            }
+            matAdj[i][j] = mat[i][j];
         }
-        GF.matAdj[aresta.vertice1][aresta.vertice2] = 0;
-        GF.matAdj[aresta.vertice2][aresta.vertice1] = 0;
     }
-    if (muda == 1)
-    {
-        GF.matAdj[aresta.vertice1][aresta.vertice2] = 1;
-        GF.matAdj[aresta.vertice2][aresta.vertice1] = 1;
-    }
-    // for (int i = 0; i < tam; i++)
-    // {
-    //     for (int j = 0; j < tam; j++)
-    //     {
-    //         cout << GF.matAdj[i][j] << " ";
-    //     }
-    //     cout << endl;
-    // }
-    // cout << endl;
-    // cout << endl;
+    matAdj[aresta.vertice1][aresta.vertice2] = 0;
+    matAdj[aresta.vertice2][aresta.vertice1] = 0;
 }
 int num_op(Grafo grafo)
 {
     int num = 0;
     for (int i = 0; i < grafo.n; i++)
     {
-        if (grafo.grafo[i].marcacao == 0)
+        if (grafo.aresta[i].marcacao == 0)
             num++;
     }
     return num - 1;
 }
-void adicionar(){}
+
+void mudarOrdem(Grafo *&pilha, int &cont, int tamanho)
+{
+
+    for (int i = 0; i < cont; i++)
+    {
+        clona_grafo(pilha[i], pilha[i + 1], tamanho);
+    }
+    cont--;
+}
+
+void imprimir(ofstream &tree, Grafo *final, Grafo *mst, int i)
+{
+    int soma = 0;
+
+    for (int j = 0; j < final[i].n - 1; j++)
+    {
+        tree << final[i].aresta[j].vertice1 << " " << final[i].aresta[j].vertice2 << " "
+             << final[i].aresta[j].peso << " " << final[i].aresta[j].marcacao << endl;
+    }
+    for (int j = 0; j < final[i].n - 1; j++)
+        soma = soma + mst[i].aresta[j].peso;
+    tree << soma << endl
+         << endl;
+    soma = 0;
+}
+
 int main()
 {
     Grafo grafo1, grafo2;
     int contMat = 1;
-
-    ofstream tree;
+    ofstream tree, tree2, ordemt;
     tree.open("Trees.txt");
+    tree2.open("Trees2.txt");
+    ordemt.open("ordemt.txt");
     ifstream infile2("ex2.in");
 
     Grafo g;
-    g.grafo = (Aresta *)malloc(sizeof(Aresta));
-
-    GrafoFinal *GF = (GrafoFinal *)malloc(2*sizeof(GrafoFinal));;
 
     infile2 >> g.n;
     int a, b, c, d, cont = 0;
@@ -113,82 +103,119 @@ int main()
 
     while (infile2 >> a >> b >> c >> d)
     {
-        g.grafo = (Aresta *)realloc(g.grafo, (cont + 1) * sizeof(Aresta));
-        g.grafo[cont].vertice1 = a;
-        g.grafo[cont].vertice2 = b;
+        g.aresta = (Aresta *)realloc(g.aresta, (cont + 1) * sizeof(Aresta));
+        g.aresta[cont].vertice1 = a;
+        g.aresta[cont].vertice2 = b;
         matrizOriginal[a][b] = 1;
         matrizOriginal[b][a] = 1;
-        g.grafo[cont].peso = c;
-        g.grafo[cont].marcacao = d;
+        g.aresta[cont].peso = c;
+        g.aresta[cont].marcacao = d;
         cont++;
     }
 
     g.m = cont;
 
-    tree << g.n << " " << g.m << endl;
-
     Grafo original;
-    original.grafo = (Aresta *)malloc(sizeof(Aresta));
-
     Grafo grafo3 = Kruskal(g, g.m, g.n);
-    clona_grafo(original, g, g.m);
 
-    grafo2.grafo = (Aresta *)malloc(sizeof(Aresta));
-    grafo1.grafo = (Aresta *)malloc(sizeof(Aresta));
-    clona_grafo(grafo1, grafo3, num_op(grafo3));
-    clona_grafo(grafo2, grafo3, num_op(grafo3));
+    clona_grafo(original, g, g.m);
+    free(g.aresta);
 
     cont = 0;
-    clona_grafo(GF[cont].final,original,num_op(original));
-    
-    for (int i = 0; i < num_op(grafo3); i++)
+
+    Grafo *final = (Grafo *)malloc(2 * sizeof(Grafo));
+    Grafo *pilha = (Grafo *)malloc(2 * sizeof(Grafo));
+    clona_grafo(final[cont], grafo3, num_op(grafo3));
+    clona_grafo(pilha[cont], grafo3, num_op(grafo3));
+
+    do
     {
-        if (grafo3.grafo[i].marcacao == 0)
+
+        clona_grafo(grafo1, pilha[0], num_op(pilha[0]));
+        clona_grafo(grafo2, pilha[0], num_op(pilha[0]));
+        cout<<"pilha[0] "<<num_op(pilha[0])<<endl;
+        
+        // for (int j = 0; j < original.n - 1; j++)
+        // {
+        //     cout << pilha[0].aresta[j].vertice1 << " " << pilha[0].aresta[j].vertice2 << " "
+        //          << pilha[0].aresta[j].peso << " " << pilha[0].aresta[j].marcacao << endl;
+        // }
+        // cout << endl;
+        
+        for (int i = 0; i < 4; i++)
         {
-            grafo1.grafo[i].marcacao = 2;
+            int matrizVerif[35][35] = {0};
 
-            for (int j = 0; j < grafo3.n-1; j++)
+            if (pilha[0].aresta[i].marcacao == 0 )
             {
-                original.grafo[j].marcacao = grafo1.grafo[j].marcacao;
-            }
-
-            Grafo mst = Kruskal(original, 10, 5);
-            clona_grafo(GF[cont].final, mst, mst.n-1);
-            mudaMatriz(original.m, GF[cont], grafo1.grafo[i], matrizOriginal, 0);
-
-            if (connect(GF[cont], original.n))
-            {
-                for (int j = 0; j < grafo3.n-1; j++)
+                grafo1.aresta[i].marcacao = 2;
+                cout<<"grafo1 "<<i<<endl;
+                for (int j = 0; j < original.n - 1; j++)
                 {
-                    if (original.grafo[j].marcacao == 2)
-                    {
-                        GF[cont].final.grafo[j].marcacao = 2;
-                    }
+                    cout << grafo1.aresta[j].vertice1 << " " << grafo1.aresta[j].vertice2 << " "
+                         << grafo1.aresta[j].peso << " " << grafo1.aresta[j].marcacao << endl;
                 }
-                cont++;
-                GF = (GrafoFinal *)realloc(GF, (cont + 1) * sizeof(GrafoFinal));
-                mudaMatriz(original.m, GF[cont - 1], grafo1.grafo[i], GF[cont - 1].matAdj, 1);
-            }
+                cout << endl;
 
-            grafo2.grafo[i].marcacao = 1;
-            clona_grafo(grafo1, grafo2, (sizeof(grafo2) / sizeof(int)));
+                for (int j = 0; j < pilha[0].n-1; j++)
+                {
+                        original.aresta[j].marcacao = grafo1.aresta[j].marcacao;
+                }
+
+                mudaMatriz(original.m, matrizVerif, original.aresta[i], matrizOriginal);
+
+                Grafo mst = Kruskal(original, original.m, original.n);
+
+                for (int j = 0; j < pilha[0].n-1; j++)
+                {
+                    if (original.aresta[j].marcacao == 2)
+                        mst.aresta[j].marcacao = 2;
+                }
+
+                if (connect(original.n, matrizVerif))
+                {
+                    cout << "entrou salvar" << endl;
+                    cont++;
+
+                    pilha = (Grafo *)realloc(pilha, (cont + 1) * sizeof(Grafo));
+                    clona_grafo(pilha[cont], original, original.n);
+
+                    final = (Grafo *)realloc(final, (cont + 1) * sizeof(Grafo));
+                    clona_grafo(final[cont], mst, num_op(final[0]));
+
+                    imprimir(tree2, pilha, pilha, i + 1);
+                    imprimir(tree, final, final, i + 1);
+                }
+                
+                cout<<cont <<" "<<num_op(pilha[0])<<endl;
+                
+                    grafo2.aresta[i].marcacao = 1;
+                    clona_grafo(grafo1, grafo2, pilha[0].n-1);
+                
+            }
+            
         }
-    }
-    int soma = 0;
-    for (int i = 0; i < cont; i++)
-    {
-        for (int j = 0; j < cont; j++)
-        {
-            tree << GF[i].final.grafo[j].vertice1 << " " << GF[i].final.grafo[j].vertice2 << " " << GF[i].final.grafo[j].peso << " " << GF[i].final.grafo[j].marcacao << endl;
-            soma = soma + GF[i].final.grafo[j].peso;
-        }
-        tree << soma << endl;
-        soma = 0;
-        tree << "-1" << endl
-             << endl;
-    }
+
+        mudarOrdem(pilha, cont, original.n - 1);
+
+    } while (cont != 1);
+
+    cont++;
+
+    // for (int i = 0; i < cont; i++)
+    // {
+    //     for (int j = 0; j < cont - 1; j++)
+    //     {
+    //         cout << pilha[i].aresta[j].vertice1 << " " << pilha[i].aresta[j].vertice2 << " " << pilha[i].aresta[j].peso
+    //              << " " << pilha[i].aresta[j].marcacao << endl;
+    //     }
+    //     cout << endl;
+    // }
 
     tree.close();
-    free(g.grafo);
-    free(original.grafo);
+    tree2.close();
+    free(g.aresta);
+    free(final);
+    free(pilha);
+    free(original.aresta);
 }

@@ -1,0 +1,33 @@
+cout << "antes " << " cont " << cont << " ordem " << ordem << " controle " << controle << endl;
+        if (ordem == cont)
+        {
+            controle--;
+        }
+
+        //cout << "fim " << controle << endl;
+        //ordemt << ordem << " " << cont << " " << controle << endl;
+        if(muda>1)
+        
+        
+        for (int i = 0; i < original.n - 1; i++)
+            imprimir(tree, pilha, pilha, i);
+        controle = ordem = cont - 1;
+        cout << "depois "<< " cont " << cont << " ordem " << ordem << " controle " << controle << endl;
+             cout<<"muda "<<muda<<endl;
+        muda = 0;
+
+        // for (int j = 0; j < original.m; j++)
+                // {
+                //     cout << original.aresta[j].vertice1 << " " << original.aresta[j].vertice2 << " " << original.aresta[j].peso
+                //          << " " << original.aresta[j].marcacao << endl;
+                // }
+                // cout << endl;
+                // for (int m = 0; m < original.n; m++)
+                // {
+                //     for (int j = 0; j < original.n; j++)
+                //     {
+                //         cout<<matrizVerif[m][j] <<" ";
+                //     }
+                //     cout << endl;
+
+                // }

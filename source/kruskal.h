@@ -1,21 +1,20 @@
 #ifndef KRUSKAL
 #define KRUSKAL
-#define MAX 100
 #include "kruskal.cpp"
-using namespace std;
-// Inicia cada vértice como representante de si próprio.
+
+// Inicia cada vï¿½rtice como representante de si prï¿½prio.
 void iniciaPai(int n);
-// Checa se dois vértices pertencem ao mesmo subset. Isso indica que, caso uma aresta seja colocada entre
-// esses vértices, formará um ciclo, deixando, assim, de ser uma árvore.
+// Checa se dois vï¿½rtices pertencem ao mesmo subset. Isso indica que, caso uma aresta seja colocada entre
+// esses vï¿½rtices, formarï¿½ um ciclo, deixando, assim, de ser uma ï¿½rvore.
 bool same_set(int x, int y);
-// Faz com que o pai de y seja pai também de x e de todos os vértices que eram representados por x.
+// Faz com que o pai de y seja pai tambï¿½m de x e de todos os vï¿½rtices que eram representados por x.
 void join(int x, int y, int n);
-// Merge genérico funcional
+// Merge genï¿½rico funcional
 // Complexidade(O(n))
-void merge(Aresta grafo[MAX], int p, int q, int r) ;
+void merge(Aresta *grafo, int p, int q, int r) ;
 
-void mergeSort(Aresta grafo[MAX], int comeco, int fim);
-
+void mergeSort(Aresta *grafo, int comeco, int fim);
+//funÃ§Ã£o responsavel pela obtenÃ§Ã£o da arvore geradora mÃ­nima
 void Kruskal();
 
 #endif

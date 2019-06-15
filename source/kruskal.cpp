@@ -1,21 +1,23 @@
 #include <iostream>
 #include <algorithm>
-
+#include "kruskal.h"
 using namespace std;
-
+//struct responsavel por criar o tipo Aresta, que recebera as caracteristicas de cada aresta do grafo
 typedef struct Aresta
 {
+    //cara aresta possui dois vertices, ou seja um ponto (vertice1,vertice2)
+    //possui um peso e uma marcação que representa suas prioridades
+    //0-opcional 1-obrigatoria 2-proibida 
     int vertice1, vertice2, peso, marcacao=0;
 } Aresta;
 
+//struct responsavel por criar o tipo Grafo, que tera um vetor de arestas definidas pelo grafo de entrada
 typedef struct Grafo
 {
     int n, m; // n -> n° vertices, m -> n° arestas
-    Aresta *aresta;
+    Aresta *aresta= (Aresta*)malloc(sizeof(Aresta));
 } Grafo;
-
 int *pai;
-
 // Inicia cada vértice como representante de si próprio.
 void iniciaPai(int n)
 {
@@ -25,6 +27,7 @@ void iniciaPai(int n)
         pai[i] = i;
     }
 }
+
 // Checa se dois vértices pertencem ao mesmo subset. Isso indica que, caso uma aresta seja colocada entre
 // esses vértices, formará um ciclo, deixando, assim, de ser uma árvore.
 bool same_set(int x, int y)
@@ -34,6 +37,7 @@ bool same_set(int x, int y)
     else
         return false;
 }
+
 // Faz com que o pai de y seja pai também de x e de todos os vértices que eram representados por x.
 void join(int x, int y, int n)
 {
@@ -49,6 +53,7 @@ void join(int x, int y, int n)
 
 // Merge genérico funcional
 // Complexidade(O(n))
+
 void merge(Aresta *aresta, int p, int q, int r)
 {
     int n1 = q - p + 1; // limite do vetor esquerdo (L)
@@ -122,44 +127,36 @@ void mergeSort(Aresta *aresta, int comeco, int fim)
     }
 }
 
+//função responsavel pela obtenção da arvore geradora mínima
 Grafo Kruskal(Grafo g, int arestas, int vertices)
 {
-    // cout << "Grafo original: \n";
-    // for(int i = 0; i < arestas; i++){
-    //     cout << "(" << g.grafo[i].vertice1 << " , " << g.grafo[i].vertice2 << ")" 
-    //     << " = " << g.grafo[i].peso <<" Mark " << g.grafo[i].marcacao << endl;
-    // }
-
+    //Entra com o as arestas e reordena de forma crescente por custo de aresta
     mergeSort(g.aresta, 0, arestas - 1);
 
-    // cout << "\n\nGrafo ordenado: \n";
-    // for(int i = 0; i < arestas; i++){
-    //     cout << "(" << g.grafo[i].vertice1 << " , " << g.grafo[i].vertice2 << ")" 
-    //     << " = " << g.grafo[i].peso <<" Mark " << g.grafo[i].marcacao << endl;
-    // }
-
     Grafo arvore;
-    arvore.aresta = (Aresta*)malloc(sizeof(Aresta));
     int size_arvore = 0;
 
+    //chamada que inicia o vetor pai 
     iniciaPai(vertices);
 
+    //A partir das prioridades de cada aresta, calcula e seta no grafo "arvore" as arestas que formam a arvore gradora minima 
     for (int i = 0; i < arestas; i++)
     {
         if (g.aresta[i].marcacao == 1)
-        {      
+        {   
+            //aloca uma nova aresta no grafo arvore
             arvore.aresta = (Aresta*)realloc(arvore.aresta,(size_arvore + 1)*sizeof(Aresta));    
             arvore.aresta[size_arvore].vertice1 = g.aresta[i].vertice1;
             arvore.aresta[size_arvore].vertice2 = g.aresta[i].vertice2;
             arvore.aresta[size_arvore].peso = g.aresta[i].peso;
             arvore.aresta[size_arvore].marcacao = g.aresta[i].marcacao;
             size_arvore++;        
-            join(g.aresta[i].vertice1, g.aresta[i].vertice2, vertices); // faz a união
+            join(g.aresta[i].vertice1, g.aresta[i].vertice2, vertices); // faz a união de duas arestas
         }else if(!same_set(g.aresta[i].vertice1,g.aresta[i].vertice2) && g.aresta[i].marcacao == 0)
-        {
+        { // se forem diferentes é porque NÃO forma ciclo, insere no vetor
             
             arvore.aresta = (Aresta*)realloc(arvore.aresta,(size_arvore+1)*sizeof(Aresta));
-            // se forem diferentes é porque NÃO forma ciclo, insere no vetor
+            
             arvore.aresta[size_arvore].vertice1 = g.aresta[i].vertice1;
             arvore.aresta[size_arvore].vertice2 = g.aresta[i].vertice2;
             arvore.aresta[size_arvore].peso = g.aresta[i].peso;
